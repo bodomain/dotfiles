@@ -1,0 +1,151 @@
+# Session integration
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_TYPE
+
+set $mod Mod4
+set $term kitty
+set $menu wofi --show drun
+set $lock swaylock -f -c 1c1c1c
+
+# Appearance
+font pango:monospace 10
+default_border pixel 2
+default_floating_border pixel 2
+gaps inner 6
+gaps outer 3
+smart_gaps on
+smart_borders on
+output * bg #1c1c1c solid_color
+
+client.focused          #434c5e #434c5e #ffffff #5e81ac #434c5e
+client.focused_inactive #3b4252 #3b4252 #d8dee9 #2e3440 #3b4252
+client.unfocused        #2e3440 #2e3440 #aeb6c2 #242933 #2e3440
+client.urgent           #bf616a #bf616a #ffffff #d08770 #bf616a
+
+# Startup
+exec dex --autostart --environment sway
+exec dunst
+exec kanshi
+exec swayidle -w timeout 600 '$lock' timeout 900 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' lock '$lock' before-sleep '$lock'
+exec sh -c 'sleep 1; notify-send "Sway config loaded"'
+
+# Audio
+bindsym --locked XF86AudioRaiseVolume exec wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+
+bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindsym --locked XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindsym --locked XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+
+# Applications and session controls
+floating_modifier $mod
+bindsym $mod+Return exec $term
+bindsym $mod+d exec $menu
+bindsym $mod+o exec obsidian
+bindsym $mod+q kill
+bindsym $mod+Shift+x exec $lock
+
+# Focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+bindsym $mod+Tab focus next
+
+# Move containers
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# Layout
+bindsym $mod+b split h
+bindsym $mod+v split v
+bindsym $mod+f fullscreen toggle
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+bindsym $mod+a focus parent
+bindsym $mod+minus scratchpad show
+bindsym $mod+Shift+minus move scratchpad
+
+# Workspaces
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+bindsym $mod+Shift+Tab workspace next
+
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+workspace_auto_back_and_forth yes
+workspace $ws1 output eDP-1
+
+# Sway controls
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit Sway and end this Wayland session?' -b 'Yes, exit' 'swaymsg exit'
+
+mode "resize" {
+    bindsym h resize shrink width 10 px or 10 ppt
+    bindsym j resize grow height 10 px or 10 ppt
+    bindsym k resize shrink height 10 px or 10 ppt
+    bindsym l resize grow width 10 px or 10 ppt
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+r mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# Input
+input type:keyboard {
+    xkb_layout us
+    xkb_variant intl
+}
+
+# Bar
+bar {
+    swaybar_command waybar
+}
+
+# Screenshots
+bindsym $mod+Shift+p exec sh -c 'geometry=$(slurp) || exit; grim -g "$geometry" - | magick png:- "$HOME/Pictures/Screenshot-$(date +%s).pdf"'
+bindsym $mod+Shift+s exec sh -c 'geometry=$(slurp) || exit; grim -g "$geometry" - | wl-copy'
+bindsym $mod+Shift+g exec sh -c 'geometry=$(slurp) || exit; filepath="$HOME/Pictures/Screenshot-$(date +%s).pdf"; grim -g "$geometry" - | magick png:- "$filepath" && printf "file://%s\n" "$filepath" | wl-copy --type text/uri-list'

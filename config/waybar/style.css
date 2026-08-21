@@ -1,0 +1,96 @@
+@define-color background #1c1c1c;
+@define-color surface #2e3440;
+@define-color surface_alt #3b4252;
+@define-color foreground #d8dee9;
+@define-color muted #aeb6c2;
+@define-color accent #5e81ac;
+@define-color accent_light #81a1c1;
+@define-color warning #d08770;
+@define-color urgent #bf616a;
+
+* {
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  font-family: FontAwesome, "Symbols Nerd Font", Roboto, sans-serif;
+  font-size: 12px;
+}
+
+window#waybar {
+  background: @background;
+  color: @foreground;
+  border-top: 2px solid @surface_alt;
+}
+
+tooltip {
+  background: @surface;
+  color: @foreground;
+  border: 1px solid @accent;
+}
+
+button {
+  padding: 0 7px;
+  color: @muted;
+  background: transparent;
+  box-shadow: inset 0 -2px transparent;
+}
+
+button:hover {
+  color: @foreground;
+  background: @surface;
+  box-shadow: inset 0 -2px @accent_light;
+}
+
+#workspaces button.focused {
+  color: #ffffff;
+  background: @surface;
+  box-shadow: inset 0 -2px @accent;
+}
+
+#workspaces button.urgent {
+  color: #ffffff;
+  background: @urgent;
+}
+
+#idle_inhibitor,
+#pulseaudio,
+#network,
+#power-profiles-daemon,
+#cpu,
+#memory,
+#backlight,
+#battery,
+#clock,
+#tray {
+  padding: 0 7px;
+  color: @foreground;
+}
+
+#idle_inhibitor.activated {
+  color: @accent_light;
+  background: @surface;
+}
+
+#pulseaudio.muted,
+#network.disconnected {
+  color: @muted;
+}
+
+#power-profiles-daemon.performance {
+  color: @warning;
+}
+
+#power-profiles-daemon.power-saver,
+#battery.charging,
+#battery.plugged {
+  color: @accent_light;
+}
+
+#battery.warning:not(.charging) {
+  color: @warning;
+}
+
+#battery.critical:not(.charging) {
+  color: #ffffff;
+  background: @urgent;
+}
