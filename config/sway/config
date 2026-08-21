@@ -149,3 +149,9 @@ bar {
 bindsym $mod+Shift+p exec sh -c 'geometry=$(slurp) || exit; grim -g "$geometry" - | magick png:- "$HOME/Pictures/Screenshot-$(date +%s).pdf"'
 bindsym $mod+Shift+s exec sh -c 'geometry=$(slurp) || exit; grim -g "$geometry" - | wl-copy'
 bindsym $mod+Shift+g exec sh -c 'geometry=$(slurp) || exit; filepath="$HOME/Pictures/Screenshot-$(date +%s).pdf"; grim -g "$geometry" - | magick png:- "$filepath" && printf "file://%s\n" "$filepath" | wl-copy --type text/uri-list'
+
+
+
+
+  bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
+  bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
